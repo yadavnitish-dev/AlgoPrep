@@ -1,31 +1,28 @@
-import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import React from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import LoginPage from './page/LoginPage'
+import SignUpPage from './page/SignUpPage'
+import HomePage from './page/HomePage'
 
 const App = () => {
-
-  let authUser = null;
-
   return (
-    <div className="flex flex-col items-center justify-start">
+    <div className='flex flex-col items-center justify-start'>
       <Routes>
         <Route 
-        path="/"
-        element= {authUser ? <HomePage /> : <Navigate to ={"/login"} />}
+        path='/login' 
+        element={<LoginPage />}
         />
-
         <Route 
-        path="/login"
-        element={!authUser ? <LoginPage /> : <Navigate to = {"/"}/>}
+        path='/signup' 
+        element={<SignUpPage />}
         />
-
         <Route 
-        path="/signup"
-        element = {!authUser ? <SignUpPage /> :<Navigate to = {"/"} />}
+        path='/' 
+        element={<HomePage />}
         />
       </Routes>
     </div>
-    
   )
 }
 
-export default App;
+export default App
