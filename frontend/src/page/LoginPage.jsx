@@ -13,7 +13,7 @@ import {
 
 import {z} from "zod";
 import AuthImagePattern from '../components/AuthImagePattern';
-// import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore } from '../store/useAuthStore';
 
 
 const LoginSchema = z.object({
@@ -62,10 +62,7 @@ const LoginPage = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            
-           
           
-
             {/* Email */}
             <div className="form-control">
               <label className="label">
