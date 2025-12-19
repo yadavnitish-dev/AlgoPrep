@@ -16,7 +16,7 @@ import AuthImagePattern from '../components/AuthImagePattern';
 import { useAuthStore } from "../store/useAuthStore";
 
 const SignUpSchema = z.object({
-  email:z.string().email("Enter a valid email"),
+  email:z.email("Enter a valid email"),
   password:z.string().min(6 , "Password must be atleast of 6 characters"),
   name:z.string().min(3 , "Name must be atleast 3 character")
 })
