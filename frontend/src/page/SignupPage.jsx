@@ -1,16 +1,24 @@
-import React, {useState} from 'react'
-import {useForm} from 'react-hook-form'
-import {zodResolver} from '@hookform/resolvers/zod'
+import React , {useState} from 'react'
+import {useForm} from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
-import {Code, Eye, EyeOff, Loader2, Lock, Mail} from 'lucide-react'
-import {z} from 'zod'
+import {
+  Code,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+} from "lucide-react";
+
+import {z} from "zod";
 import AuthImagePattern from '../components/AuthImagePattern';
 import { useAuthStore } from "../store/useAuthStore";
 
 const SignUpSchema = z.object({
-    email : z.email('Enter a valid email'),
-    password : z.string().min(6, 'Password must be atleast of 6 characters'),
-    name: z.string().min(3, "Name must be atleast of 3 characters")
+  email:z.string().email("Enter a valid email"),
+  password:z.string().min(6 , "Password must be atleast of 6 characters"),
+  name:z.string().min(3 , "Name must be atleast 3 character")
 })
 
 const SignUpPage = () => {
