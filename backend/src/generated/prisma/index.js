@@ -235,7 +235,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/nitish/Desktop/leetlab/backend/src/generated/prisma",
+      "value": "/Users/nitish/Desktop/projects/leetlab/backend/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -249,7 +249,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/nitish/Desktop/leetlab/backend/prisma/schema.prisma",
+    "sourceFilePath": "/Users/nitish/Desktop/projects/leetlab/backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
