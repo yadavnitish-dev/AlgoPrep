@@ -51,12 +51,20 @@ export const getPlayListDetails = async (req, res) => {
   const { playlistId } = req.params;
 
   try {
-    const playList = await db.playlist.findUnique({
+    const playList = await db.playlist.findFirst({
       where: { id: playlistId, userId: req.user.id },
       include: {
         problems: {
           include: {
-            problem: true,
+            problem: {
+              include: {
+                solvedBy: {
+                  select: {
+                    userId: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -143,7 +151,7 @@ export const removeProblemFromPlaylist = async (req, res) => {
 
     const deletedProblem = await db.problemInPlaylist.deleteMany({
       where: {
-        playlistId,
+        playListId: playlistId,
         problemId: {
           in: problemIds,
         },

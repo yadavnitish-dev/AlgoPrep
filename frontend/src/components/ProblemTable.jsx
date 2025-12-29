@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
+import { Bookmark, PencilIcon, Trash, TrashIcon, Plus, ListMusic } from "lucide-react";
 import { useActions } from "../store/useAction";
 import AddToPlaylistModal from "./AddToPlaylist";
 import CreatePlaylistModal from "./CreatePlaylistModal";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 
 
-const ProblemsTable = ({ problems }) => {
+const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
   const { authUser } = useAuthStore();
   const { onDeleteProblem } = useActions();
   const { createPlaylist } = usePlaylistStore();
@@ -73,13 +73,19 @@ const ProblemsTable = ({ problems }) => {
       {/* Header with Create Playlist Button */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Problems</h2>
-        <button
-          className="btn btn-primary gap-2"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <Plus className="w-4 h-4" />
-          Create Playlist
-        </button>
+        <div className="flex gap-3">
+          <Link to="/profile" className="btn btn-neutral gap-2">
+            <ListMusic className="w-4 h-4" />
+            My Playlists
+          </Link>
+          <button
+            className="btn btn-primary gap-2"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Plus className="w-4 h-4" />
+            Create Playlist
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -175,7 +181,7 @@ const ProblemsTable = ({ problems }) => {
                         {problem.difficulty}
                       </span>
                     </td>
-                    <td>
+                      <td>
                       <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
                         {authUser?.role === "ADMIN" && (
                           <div className="flex gap-2">
@@ -190,13 +196,24 @@ const ProblemsTable = ({ problems }) => {
                             </button>
                           </div>
                         )}
-                        <button
-                          className="btn btn-sm btn-outline flex gap-2 items-center"
-                          onClick={() => handleAddToPlaylist(problem.id)}
-                        >
-                          <Bookmark className="w-4 h-4" />
-                          <span className="hidden sm:inline">Save to Playlist</span>
-                        </button>
+                        
+                        {isPlaylist ? (
+                           <button
+                            className="btn btn-sm btn-error btn-outline flex gap-2 items-center"
+                            onClick={() => onRemove(problem.id)}
+                          >
+                            <Trash className="w-4 h-4" />
+                            <span className="hidden sm:inline">Remove</span>
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-sm btn-outline flex gap-2 items-center"
+                            onClick={() => handleAddToPlaylist(problem.id)}
+                          >
+                            <Bookmark className="w-4 h-4" />
+                            <span className="hidden sm:inline">Save to Playlist</span>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
