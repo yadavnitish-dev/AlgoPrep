@@ -31,7 +31,9 @@ const Navbar = ()=>{
                 <img
                   src={
                     authUser?.image ||
-                    "https://avatar.iran.liara.run/public/boy"
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      authUser?.name || "User"
+                    )}&background=random`
                   }
                   alt="User Avatar"
                   className="object-cover"
