@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { Bookmark, PencilIcon, Trash, TrashIcon, Plus, ListMusic } from "lucide-react";
+import { Bookmark, PencilIcon, Trash, TrashIcon, Plus, ListMusic, Search, CheckCircle, Circle } from "lucide-react";
 import { useActions } from "../store/useAction";
 import AddToPlaylistModal from "./AddToPlaylist";
 import CreatePlaylistModal from "./CreatePlaylistModal";
@@ -21,7 +21,7 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
   const [selectedProblemId, setSelectedProblemId] = useState(null);
 
   // Extract all unique tags from problems
-  const allTags = useMemo(() => {
+  const uniqueTags = useMemo(() => {
     if (!Array.isArray(problems)) return [];
     const tagsSet = new Set();
     problems.forEach((p) => p.tags?.forEach((t) => tagsSet.add(t)));
@@ -89,139 +89,164 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <input
-          type="text"
-          placeholder="Search by title"
-          className="input input-bordered w-full md:w-1/3 bg-base-200"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="relative">
+             <input
+                type="text"
+                placeholder="Search problems..."
+                className="input input-bordered w-full bg-base-100/50 focus:bg-base-100 transition-colors pl-10"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+            />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
+        </div>
+        
         <select
-          className="select select-bordered bg-base-200"
+          className="select select-bordered w-full bg-base-100/50 focus:bg-base-100 transition-colors"
+          value={selectedTag}
+          onChange={(e) => setSelectedTag(e.target.value)}
+        >
+          <option value="ALL">All Categories</option>
+          {uniqueTags.map(tag => (
+              <option key={tag} value={tag}>{tag}</option>
+          ))}
+        </select>
+
+        <select
+          className="select select-bordered w-full bg-base-100/50 focus:bg-base-100 transition-colors"
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
         >
           <option value="ALL">All Difficulties</option>
-          {difficulties.map((diff) => (
-            <option key={diff} value={diff}>
-              {diff.charAt(0).toUpperCase() + diff.slice(1).toLowerCase()}
-            </option>
-          ))}
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
         </select>
-        <select
-          className="select select-bordered bg-base-200"
-          value={selectedTag}
-          onChange={(e) => setSelectedTag(e.target.value)}
-        >
-          <option value="ALL">All Tags</option>
-          {allTags.map((tag) => (
-            <option key={tag} value={tag}>
-              {tag}
-            </option>
-          ))}
-        </select>
+        
+        {/* Placeholder for future filter or clear button */}
+         <button 
+            className="btn btn-ghost text-base-content/60 hover:text-primary"
+            onClick={() => {
+                setSearch("");
+                setSelectedTag("ALL");
+                setDifficulty("ALL");
+            }}
+         >
+             Clear Filters
+         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-xl shadow-md">
-        <table className="table table-zebra table-lg bg-base-200 text-base-content">
-          <thead className="bg-base-300">
+      {/* Problems Table */}
+      <div className="overflow-x-auto rounded-xl border border-base-content/5 bg-base-100/30">
+        <table className="table table-lg w-full">
+          {/* head */}
+          <thead className="bg-base-200/50 backdrop-blur-sm text-base-content/60 uppercase text-xs font-bold tracking-wider">
             <tr>
-              <th>Solved</th>
-              <th>Title</th>
-              <th>Tags</th>
-              <th>Difficulty</th>
-              <th>Actions</th>
+              <th className="py-4">Status</th>
+              <th className="py-4">Title</th>
+              <th className="py-4">Difficulty</th>
+              <th className="py-4">Category</th>
+              {authUser?.role === "ADMIN" && <th className="py-4 text-right">Actions</th>}
+              <th className="py-4 text-right pl-4">Add to Playlist</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-base-content/5">
             {paginatedProblems.length > 0 ? (
               paginatedProblems.map((problem) => {
-                const isSolved = problem.solvedBy.some(
-                  (user) => user.userId === authUser?.id
-                );
+                const difficultyColor =
+                  problem.difficulty === "Easy"
+                    ? "badge-success text-success-content"
+                    : problem.difficulty === "Medium"
+                    ? "badge-warning text-warning-content"
+                    : "badge-error text-error-content";
+                
+                const isSolved = problem.solvedBy && problem.solvedBy.some(
+                    (user) => user.userId === authUser?.id
+                  );
+
                 return (
-                  <tr key={problem.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={isSolved}
-                        readOnly
-                        className="checkbox checkbox-sm"
-                      />
+                  <tr key={problem.id} className="group hover:bg-base-content/[0.02] transition-colors duration-200">
+                    <td className="w-16">
+                      {isSolved ? (
+                        <div className="tooltip" data-tip="Solved">
+                           <CheckCircle className="text-success w-5 h-5 mx-auto" />
+                        </div>
+                      ) : (
+                        <div className="tooltip" data-tip="Unsolved">
+                          <Circle className="text-base-content/20 w-5 h-5 mx-auto" />
+                        </div>
+                      )}
                     </td>
                     <td>
-                      <Link to={`/problem/${problem.id}`} className="font-semibold hover:underline">
+                      <Link
+                        to={`/problem/${problem.id}`}
+                        className="font-semibold text-lg hover:text-primary transition-colors flex items-center gap-2"
+                      >
                         {problem.title}
                       </Link>
                     </td>
                     <td>
-                      <div className="flex flex-wrap gap-1">
-                        {(problem.tags || []).map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="badge badge-outline badge-warning text-xs font-bold"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge font-semibold text-xs text-white ${
-                          problem.difficulty === "EASY"
-                            ? "badge-success"
-                            : problem.difficulty === "MEDIUM"
-                            ? "badge-warning"
-                            : "badge-error"
-                        }`}
-                      >
+                      <span className={`badge ${difficultyColor} badge-sm font-medium border-none bg-opacity-20`}>
                         {problem.difficulty}
                       </span>
                     </td>
-                      <td>
-                      <div className="flex flex-col md:flex-row gap-2 items-start md:items-center">
-                        {authUser?.role === "ADMIN" && (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleDelete(problem.id)}
-                              className="btn btn-sm btn-error"
-                            >
-                              <TrashIcon className="w-4 h-4 text-white" />
-                            </button>
-                            <button disabled className="btn btn-sm btn-warning">
-                              <PencilIcon className="w-4 h-4 text-white" />
-                            </button>
-                          </div>
-                        )}
-                        
-                        {isPlaylist ? (
-                           <button
-                            className="btn btn-sm btn-error btn-outline flex gap-2 items-center"
-                            onClick={() => onRemove(problem.id)}
-                          >
-                            <Trash className="w-4 h-4" />
-                            <span className="hidden sm:inline">Remove</span>
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-sm btn-outline flex gap-2 items-center"
-                            onClick={() => handleAddToPlaylist(problem.id)}
-                          >
-                            <Bookmark className="w-4 h-4" />
-                            <span className="hidden sm:inline">Save to Playlist</span>
-                          </button>
-                        )}
+                    <td>
+                      <div className="flex flex-wrap gap-1">
+                        {problem.tags?.slice(0, 3).map((tag, i) => (
+                           <span key={i} className="badge badge-ghost badge-sm text-base-content/60">
+                             {tag}
+                           </span>
+                        ))}
                       </div>
                     </td>
+                    {authUser?.role === "ADMIN" && (
+                      <td className="text-right space-x-2">
+                         <button
+                          className="btn btn-ghost btn-sm btn-square text-info hover:bg-info/10"
+                          onClick={() => {
+                            setSelectedProblem(problem);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          <PencilIcon className="size-4" />
+                        </button>
+                        <button
+                          className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
+                          onClick={() => handleDeleteProblem(problem.id)}
+                        >
+                          <TrashIcon className="size-4" />
+                        </button>
+                      </td>
+                    )}
+                     <td className="text-right pl-4">
+                       {
+                          isPlaylist ? (
+                               <button 
+                                  className="btn btn-ghost btn-sm text-error gap-2 hover:bg-error/10"
+                                  onClick={() => onRemove(problem.id)}
+                              >
+                                  <Trash className="w-4 h-4"/>
+                                  <span className="hidden md:inline">Remove</span>
+                               </button>
+                          ) : (
+                               <button
+                                  className="btn btn-ghost btn-sm text-base-content/60 hover:text-primary hover:bg-primary/10 transition-all"
+                                  onClick={() => {
+                                  setIsAddToPlaylistModalOpen(true);
+                                  setSelectedProblemId(problem.id);
+                                  }}
+                              >
+                                  <Bookmark className="w-4 h-4" />
+                              </button>
+                          )
+                       }
+                     </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan={5} className="text-center py-6 text-gray-500">
+                <td colSpan={6} className="text-center py-6 text-gray-500">
                   No problems found.
                 </td>
               </tr>

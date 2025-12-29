@@ -13,21 +13,23 @@ const Navbar = ()=>{
     console.log("AUTH_USER",authUser)
 
     return (
-     <nav className="sticky top-0 z-50 w-full py-5">
-      <div className="flex w-full justify-between mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 p-4 rounded-2xl">
+     <nav className="sticky top-0 z-50 w-full py-4 px-4">
+      <div className="flex w-full justify-between items-center mx-auto max-w-7xl glass-panel p-3 rounded-2xl">
         {/* Logo Section */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          <img src="/leetlab.svg" className="h-18 w-18 bg-primary/20 text-primary border-none px-2 py-2 rounded-full" />
-          <span className="text-lg md:text-2xl font-bold tracking-tight text-white hidden md:block">
-          AlgoPrep
+        <Link to="/" className="flex items-center gap-3 cursor-pointer pl-2">
+          <div className="bg-primary/10 p-2 rounded-xl">
+             <img src="/leetlab.svg" className="size-8" alt="Logo" />
+          </div>
+          <span className="text-xl md:text-2xl font-bold tracking-tight text-white hidden md:block font-display">
+            AlgoPrep
           </span>
         </Link>
 
         {/* User Profile and Dropdown */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 pr-2">
           <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-ghost btn-circle avatar flex flex-row ">
-              <div className="w-10 rounded-full ">
+            <label tabIndex={0} className="btn btn-ghost btn-circle avatar border border-white/10 hover:border-primary/50 transition-colors">
+              <div className="w-10 rounded-full">
                 <img
                   src={
                     authUser?.image ||
@@ -39,30 +41,34 @@ const Navbar = ()=>{
                   className="object-cover"
                 />
               </div>
-           
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow bg-base-100 rounded-box w-52 space-y-3"
+              className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow-2xl bg-base-200/90 backdrop-blur-md rounded-xl w-60 border border-white/5"
             >
-              {/* Admin Option */}
-             
-
-              {/* Common Options */}
+              <li className="menu-title px-4 py-2 text-base-content/50 uppercase text-xs font-bold tracking-wider">
+                Logged in as
+              </li>
+              <li className="px-4 pb-2 mb-2 border-b border-white/5">
+                 <span className="font-semibold text-white truncate block w-full">{authUser?.name}</span>
+                 <span className="text-xs text-base-content/60 truncate block w-full">{authUser?.email}</span>
+              </li>
+              
               <li>
-                <p className="text-base font-semibold">
-                 
-                  {authUser?.name}
-
-                </p>
-                <hr className="border-gray-200/10" />
+                <Link
+                    to="/explore"
+                    className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
+                >
+                    <Code className="w-4 h-4" />
+                    Explore
+                </Link>
               </li>
               <li>
                 <Link
                   to="/profile"
-                  className="hover:bg-primary hover:text-white text-base font-semibold"
+                  className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
                 >
-                  <User className="w-4 h-4 mr-2" />
+                  <User className="w-4 h-4" />
                   My Profile
                 </Link>
               </li>
@@ -70,16 +76,16 @@ const Navbar = ()=>{
                 <li>
                   <Link
                     to="/add-problem"
-                    className="hover:bg-primary hover:text-white text-base font-semibold"
+                    className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
                   >
-                    <Code className="w-4 h-4 mr-1" />
+                    <Code className="w-4 h-4" />
                     Add Problem
                   </Link>
                 </li>
               )}
-              <li>
-                <LogoutButton className="hover:bg-primary hover:text-white">
-                  <LogOut className="w-4 h-4 mr-2" />
+              <li className="mt-1 border-t border-white/5 pt-1">
+                <LogoutButton className="py-3 hover:bg-error/10 hover:text-error font-medium text-error">
+                  <LogOut className="w-4 h-4" />
                   Logout
                 </LogoutButton>
               </li>

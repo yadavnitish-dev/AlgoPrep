@@ -1,6 +1,7 @@
 import React from 'react'
 import {useForm} from "react-hook-form";
-import {X} from "lucide-react";
+import {X, ListMusic, Plus} from "lucide-react";
+
 const CreatePlaylistModal = ({isOpen , onClose , onSubmit}) => {
     const {register , handleSubmit , formState:{errors} , reset} = useForm();
 
@@ -13,49 +14,63 @@ const CreatePlaylistModal = ({isOpen , onClose , onSubmit}) => {
     if(!isOpen) return null;
 
   return (
-   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center p-4 border-b border-base-300">
-          <h3 className="text-xl font-bold">Create New Playlist</h3>
-          <button onClick={onClose} className="btn btn-ghost btn-sm btn-circle">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all duration-300">
+      <div className="glass-panel w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-white/10 animate-scale-in">
+        {/* Header */}
+        <div className="flex justify-between items-center p-5 border-b border-white/5 bg-white/5">
+          <h3 className="text-xl font-bold flex items-center gap-2 text-white">
+            <ListMusic className="w-5 h-5 text-primary" />
+            Create Playlist
+          </h3>
+          <button 
+            onClick={onClose} 
+            className="btn btn-ghost btn-sm btn-circle hover:bg-white/10 text-base-content/60 hover:text-white transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
+        {/* Body */}
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-5">
           <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Playlist Name</span>
+            <label className="text-sm font-semibold text-base-content/70 mb-2 block uppercase tracking-wide">
+              Playlist Name
             </label>
             <input
               type="text"
-              className="input input-bordered w-full"
-              placeholder="Enter playlist name"
+              className="input input-bordered w-full bg-base-300/30 border-white/10 focus:border-primary/50 focus:bg-base-300/50 transition-all"
+              placeholder="e.g. Dynamic Programming Patterns"
               {...register('name', { required: 'Playlist name is required' })}
             />
             {errors.name && (
-              <label className="label">
-                <span className="label-text-alt text-error">{errors.name.message}</span>
-              </label>
+              <span className="text-xs text-error mt-2 block font-medium">{errors.name.message}</span>
             )}
           </div>
 
           <div className="form-control">
-            <label className="label">
-              <span className="label-text font-medium">Description</span>
+            <label className="text-sm font-semibold text-base-content/70 mb-2 block uppercase tracking-wide">
+              Description
             </label>
             <textarea
-              className="textarea textarea-bordered h-24"
-              placeholder="Enter playlist description"
+              className="textarea textarea-bordered h-28 bg-base-300/30 border-white/10 focus:border-primary/50 focus:bg-base-300/50 transition-all resize-none"
+              placeholder="What kind of problems will this playlist contain?"
               {...register('description')}
             />
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
-            <button type="button" onClick={onClose} className="btn btn-ghost">
+          <div className="flex gap-3 pt-2">
+            <button 
+                type="button" 
+                onClick={onClose} 
+                className="btn btn-ghost flex-1 hover:bg-white/5 font-medium"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button 
+                type="submit" 
+                className="btn btn-primary flex-1 shadow-lg shadow-primary/20"
+            >
+              <Plus className="w-4 h-4" />
               Create Playlist
             </button>
           </div>
