@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 import {
-  Code,
   Eye,
   EyeOff,
   Loader2,
@@ -22,6 +21,8 @@ const SignUpSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
 });
 
+type SignUpFormData = z.infer<typeof SignUpSchema>;
+
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { signup, isSigninUp } = useAuthStore();
@@ -30,11 +31,11 @@ const SignUpPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignUpFormData>({
     resolver: zodResolver(SignUpSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
       await signup(data);
     } catch (error) {

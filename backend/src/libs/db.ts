@@ -1,6 +1,8 @@
-import {PrismaClient} from "../generated/prisma/index.js"
+import { PrismaClient } from "../generated/prisma/index.js";
 
-const globalForPrisma = globalThis;
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
 export const db = globalForPrisma.prisma || new PrismaClient();
 
@@ -10,6 +12,6 @@ db.$connect()
   .then(() => {
     console.log("Database connected successfully");
   })
-  .catch((error) => {
+  .catch((error: unknown) => {
     console.error("Database connection failed:", error);
   });

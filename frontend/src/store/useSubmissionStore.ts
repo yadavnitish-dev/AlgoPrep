@@ -1,11 +1,25 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { Submission } from "../types";
 
-export const useSubmissionStore = create((set, get) => ({
+interface SubmissionState {
+  isLoading: boolean;
+  submissions: Submission[];
+  submission: Submission | null; 
+  
+  submissionCount: number | null;
+
+  getAllSubmissions: () => Promise<void>;
+  getSubmissionForProblem: (problemId: string) => Promise<void>;
+  getSubmissionCountForProblem: (problemId: string) => Promise<void>;
+}
+
+export const useSubmissionStore = create<SubmissionState>((set) => ({
   isLoading: false,
   submissions: [],
-  submission: null,
+  submission: null as any, 
+  
   submissionCount: null,
 
   getAllSubmissions: async () => {
@@ -24,13 +38,13 @@ export const useSubmissionStore = create((set, get) => ({
     }
   },
 
-  getSubmissionForProblem: async (problemId) => {
+  getSubmissionForProblem: async (problemId: string) => {
     try {
       const res = await axiosInstance.get(
         `/submission/get-submission/${problemId}`
       );
 
-      set({ submission: res.data.submissions });
+      set({ submission: res.data.submissions }); 
     } catch (error) {
       console.log("Error getting submissions for problem", error);
 
@@ -40,7 +54,7 @@ export const useSubmissionStore = create((set, get) => ({
     }
   },
 
-  getSubmissionCountForProblem: async (problemId) => {
+  getSubmissionCountForProblem: async (problemId: string) => {
     try {
       const res = await axiosInstance.get(
         `/submission/get-submissions-count/${problemId}`
@@ -53,3 +67,4 @@ export const useSubmissionStore = create((set, get) => ({
     }
   },
 }));
+

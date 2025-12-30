@@ -4,12 +4,32 @@ import {
   pollBatchResults,
   submitBatch,
 } from "../libs/judge0.lib.js";
+import { Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
-export const executeCode = async (req, res) => {
+interface TestResult {
+  testCase: number;
+  passed: boolean;
+  stdout: string | undefined;
+  expected: string | undefined;
+  stderr: string | null;
+  compile_output: string | null;
+  status: any;
+  memory: string | undefined;
+  time: string | undefined;
+}
+
+export const executeCode = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
     const { source_code, language_id, stdin, expected_outputs, problemId } =
       req.body;
 
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const userId = req.user.id;
 
     if (
@@ -21,15 +41,16 @@ export const executeCode = async (req, res) => {
       return res.status(400).json({ error: "Invalid or Missing test cases" });
     }
 
-    const submissions = stdin.map((input) => ({
+    const submissions = stdin.map((input: string) => ({
       source_code,
       language_id,
       stdin: input,
+      expected_output: "", // Helper requirement for structure, though ignored in some contexts
     }));
 
     const submitResponse = await submitBatch(submissions);
 
-    const tokens = submitResponse.map((res) => res.token);
+    const tokens = submitResponse.map((res: any) => res.token);
 
     const results = await pollBatchResults(tokens);
 
@@ -37,7 +58,7 @@ export const executeCode = async (req, res) => {
     console.log(results);
 
     let allPassed = true;
-    const detailedResults = results.map((result, i) => {
+    const detailedResults: TestResult[] = results.map((result: any, i: number) => {
       const stdout = result.stdout?.trim();
       const expected_output = expected_outputs[i]?.trim();
       const passed = stdout === expected_output;
@@ -55,13 +76,6 @@ export const executeCode = async (req, res) => {
         memory: result.memory ? `${result.memory} KB` : undefined,
         time: result.time ? `${result.time} s` : undefined,
       };
-
-      // console.log(`Testcase #${i+1}`);
-      // console.log(`Input for testcase #${i+1}: ${stdin[i]}`)
-      // console.log(`Expected Output for testcase #${i+1}: ${expected_output}`)
-      // console.log(`Actual output for testcase #${i+1}: ${stdout}`)
-
-      // console.log(`Matched testcase #${i+1}: ${passed}`)
     });
 
     console.log(detailedResults);
@@ -110,8 +124,8 @@ export const executeCode = async (req, res) => {
       submissionId: submission.id,
       testCase: result.testCase,
       passed: result.passed,
-      stdout: result.stdout,
-      expected: result.expected,
+      stdout: result.stdout || "",
+      expected: result.expected || "",
       stderr: result.stderr,
       compileOutput: result.compile_output,
       status: result.status,
@@ -137,8 +151,9 @@ export const executeCode = async (req, res) => {
       message: "Code Executed! Successfully!",
       submission: submissionWithTestCase,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error executing code:", error.message);
     res.status(500).json({ error: "Failed to execute code" });
   }
 };
+

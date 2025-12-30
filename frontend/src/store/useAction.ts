@@ -3,15 +3,19 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { useProblemStore } from "./useProblemStore";
 
-export const useActions = create((set) => ({
+interface ActionState {
+  isDeletingProblem: boolean;
+  onDeleteProblem: (id: string) => Promise<void>;
+}
+
+export const useActions = create<ActionState>((set) => ({
   isDeletingProblem: false,
 
-  onDeleteProblem: async (id) => {
+  onDeleteProblem: async (id: string) => {
     try {
       set({ isDeletingProblem: true });
       const res = await axiosInstance.delete(`/problems/delete-problem/${id}`);
       
-      // Update the problem store locally
       useProblemStore.getState().removeProblem(id);
       
       toast.success(res.data.message);
@@ -23,3 +27,4 @@ export const useActions = create((set) => ({
     }
   },
 }));
+

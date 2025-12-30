@@ -1,8 +1,22 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { User } from "../types";
 
-export const useAuthStore = create((set) => ({
+
+interface AuthState {
+  authUser: User | null;
+  isSigninUp: boolean;
+  isLoggingIn: boolean;
+  isCheckingAuth: boolean;
+  
+  checkAuth: () => Promise<void>;
+  signup: (data: any) => Promise<void>; 
+  login: (data: any) => Promise<void>; 
+  logout: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
   authUser: null,
   isSigninUp: false,
   isLoggingIn: false,
@@ -67,3 +81,4 @@ export const useAuthStore = create((set) => ({
     }
   },
 }));
+

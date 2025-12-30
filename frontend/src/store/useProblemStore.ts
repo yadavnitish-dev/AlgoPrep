@@ -1,8 +1,22 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import { toast } from "react-hot-toast";
+import { Problem } from "../types";
 
-export const useProblemStore = create((set) => ({
+interface ProblemState {
+  problems: Problem[];
+  problem: Problem | null;
+  solvedProblems: Problem[];
+  isProblemsLoading: boolean;
+  isProblemLoading: boolean;
+
+  getAllProblems: () => Promise<void>;
+  getProblemById: (id: string) => Promise<void>;
+  getSolvedProblemByUser: () => Promise<void>;
+  removeProblem: (id: string) => void;
+}
+
+export const useProblemStore = create<ProblemState>((set) => ({
   problems: [],
   problem: null,
   solvedProblems: [],
@@ -24,7 +38,7 @@ export const useProblemStore = create((set) => ({
     }
   },
 
-  getProblemById: async (id) => {
+  getProblemById: async (id: string) => {
     try {
       set({ isProblemLoading: true });
 
@@ -32,10 +46,9 @@ export const useProblemStore = create((set) => ({
 
       set({ problem: res.data.problem });
 
-      toast.success(res.data.message);
     } catch (error) {
-      console.log("Error getting all problems", error);
-      toast.error("Error in getting problems");
+      console.log("Error getting problem", error);
+      toast.error("Error in getting problem");
     } finally {
       set({ isProblemLoading: false });
     }
@@ -51,9 +64,10 @@ export const useProblemStore = create((set) => ({
       toast.error("Error getting solved problems");
     }
   },
-  removeProblem: (id) => {
+  removeProblem: (id: string) => {
     set((state) => ({
       problems: state.problems.filter((p) => p.id !== id),
     }));
   },
 }));
+

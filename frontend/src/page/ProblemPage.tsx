@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import {
   Play,
@@ -6,10 +6,8 @@ import {
   MessageSquare,
   Lightbulb,
   Bookmark,
-  Share2,
   Clock,
   ChevronRight,
-  BookOpen,
   Terminal,
   Code2,
   Users,
@@ -23,7 +21,6 @@ import { useProblemStore } from "../store/useProblemStore";
 import { getLanguageId } from "../lib/lang";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
-import Submission from "../components/Submission";
 import SubmissionsList from "../components/SubmissionList";
 
 const ProblemPage = () => {
@@ -42,13 +39,13 @@ const ProblemPage = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [testcases, setTestCases] = useState([]);
 
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   const { executeCode, submission, isRunning, isSubmitting } = useExecutionStore();
 
   useEffect(() => {
+    if (!id) return;
     getProblemById(id);
     getSubmissionCountForProblem(id);
   }, [id]);
@@ -58,12 +55,7 @@ const ProblemPage = () => {
       setCode(
         problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
       );
-      setTestCases(
-        problem.testcases?.map((tc) => ({
-          input: tc.input,
-          output: tc.output,
-        })) || []
-      );
+
     }
   }, [problem, selectedLanguage]);
 

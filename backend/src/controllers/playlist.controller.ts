@@ -1,8 +1,16 @@
 import { db } from "../libs/db.js";
+import { Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
-export const createPlayList = async (req, res) => {
+export const createPlayList = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
     const { name, description } = req.body;
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const userId = req.user.id;
 
     const playList = await db.playlist.create({
@@ -23,8 +31,14 @@ export const createPlayList = async (req, res) => {
   }
 };
 
-export const getPlayAllListDetails = async (req, res) => {
+export const getPlayAllListDetails = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const playLists = await db.playlist.findMany({
       where: {
         userId: req.user.id,
@@ -47,10 +61,16 @@ export const getPlayAllListDetails = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch playlist" });
   }
 };
-export const getPlayListDetails = async (req, res) => {
+export const getPlayListDetails = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   const { playlistId } = req.params;
 
   try {
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const playList = await db.playlist.findFirst({
       where: { id: playlistId, userId: req.user.id },
       include: {
@@ -85,9 +105,12 @@ export const getPlayListDetails = async (req, res) => {
   }
 };
 
-export const addProblemToPlaylist = async (req, res) => {
+export const addProblemToPlaylist = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   const { playlistId } = req.params;
-  const { problemIds } = req.body; 
+  const { problemIds } = req.body;
 
   try {
     if (!Array.isArray(problemIds) || problemIds.length === 0) {
@@ -113,13 +136,16 @@ export const addProblemToPlaylist = async (req, res) => {
       message: "Problems added to playlist successfully",
       problemsInPlaylist,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding problems to playlist:", error.message);
     res.status(500).json({ error: "Failed to add problems to playlist" });
   }
 };
 
-export const deletePlayList = async (req, res) => {
+export const deletePlayList = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   const { playlistId } = req.params;
 
   try {
@@ -134,13 +160,16 @@ export const deletePlayList = async (req, res) => {
       message: "Playlist deleted successfully",
       deletedPlaylist,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting playlist:", error.message);
     res.status(500).json({ error: "Failed to delete playlist" });
   }
 };
 
-export const removeProblemFromPlaylist = async (req, res) => {
+export const removeProblemFromPlaylist = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   const { playlistId } = req.params;
   const { problemIds } = req.body;
 
@@ -163,8 +192,9 @@ export const removeProblemFromPlaylist = async (req, res) => {
       message: "Problem removed from playlist successfully",
       deletedProblem,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error removing problem from playlist:", error.message);
     res.status(500).json({ error: "Failed to remove problem from playlist" });
   }
 };
+

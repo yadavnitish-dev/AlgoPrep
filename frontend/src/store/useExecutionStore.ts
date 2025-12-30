@@ -1,18 +1,34 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { Submission } from "../types";
 
-export const useExecutionStore = create((set) => ({
+interface ExecutionState {
+  isRunning: boolean;
+  isSubmitting: boolean;
+  submission: Submission | null;
+
+  executeCode: (
+    source_code: string,
+    language_id: number,
+    stdin: string[],
+    expected_outputs: string[],
+    problemId: string,
+    mode?: "run" | "submit"
+  ) => Promise<void>;
+}
+
+export const useExecutionStore = create<ExecutionState>((set) => ({
   isRunning: false,
   isSubmitting: false,
   submission: null,
 
   executeCode: async (
-    source_code,
-    language_id,
-    stdin,
-    expected_outputs,
-    problemId,
+    source_code: string,
+    language_id: number,
+    stdin: string[],
+    expected_outputs: string[],
+    problemId: string,
     mode = "run"
   ) => {
     try {
@@ -54,3 +70,4 @@ export const useExecutionStore = create((set) => ({
     }
   },
 }));
+

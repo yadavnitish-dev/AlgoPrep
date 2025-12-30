@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
-import { User, Mail, Shield, Calendar, Award, ListMusic } from "lucide-react";
+import { Mail, Calendar, Award, ListMusic } from "lucide-react";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 import { useProblemStore } from "../store/useProblemStore";
 

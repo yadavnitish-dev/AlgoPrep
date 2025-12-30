@@ -1,7 +1,15 @@
 import { db } from "../libs/db.js";
+import { Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 
-export const getAllSubmission = async (req, res) => {
+export const getAllSubmission = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const userId = req.user.id;
 
     const submissions = await db.submission.findMany({
@@ -21,8 +29,14 @@ export const getAllSubmission = async (req, res) => {
   }
 };
 
-export const getSubmissionsForProblem = async (req, res) => {
+export const getSubmissionsForProblem = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
+    if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
     const userId = req.user.id;
     const problemId = req.params.problemId;
     const submissions = await db.submission.findMany({
@@ -43,7 +57,10 @@ export const getSubmissionsForProblem = async (req, res) => {
   }
 };
 
-export const getAllTheSubmissionsForProblem = async (req, res) => {
+export const getAllTheSubmissionsForProblem = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<any> => {
   try {
     const problemId = req.params.problemId;
     const submission = await db.submission.count({
@@ -62,3 +79,4 @@ export const getAllTheSubmissionsForProblem = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch submissions" });
   }
 };
+
