@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { useProblemStore } from "./useProblemStore";
 
 export const useActions = create((set) => ({
   isDeletingProblem: false,
@@ -9,6 +10,10 @@ export const useActions = create((set) => ({
     try {
       set({ isDeletingProblem: true });
       const res = await axiosInstance.delete(`/problems/delete-problem/${id}`);
+      
+      // Update the problem store locally
+      useProblemStore.getState().removeProblem(id);
+      
       toast.success(res.data.message);
     } catch (error) {
       console.log("Error deleting problem", error);

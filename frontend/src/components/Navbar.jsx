@@ -14,7 +14,7 @@ const Navbar = ()=>{
 
     return (
      <nav className="sticky top-0 z-50 w-full py-4 px-4">
-      <div className="flex w-full justify-between items-center mx-auto max-w-7xl glass-panel p-3 rounded-2xl">
+      <div className="flex w-full justify-between items-center mx-auto max-w-[1600px] glass-panel p-3 rounded-2xl">
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer pl-2">
           <div className="bg-primary/10 p-2 rounded-xl">
@@ -58,6 +58,12 @@ const Navbar = ()=>{
                 <Link
                     to="/explore"
                     className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
+                    onClick={() => {
+                        const elem = document.activeElement;
+                        if (elem) {
+                          elem?.blur();
+                        }
+                      }}
                 >
                     <Code className="w-4 h-4" />
                     Explore
@@ -67,6 +73,12 @@ const Navbar = ()=>{
                 <Link
                   to="/profile"
                   className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
+                  onClick={() => {
+                    const elem = document.activeElement;
+                    if (elem) {
+                      elem?.blur();
+                    }
+                  }}
                 >
                   <User className="w-4 h-4" />
                   My Profile
@@ -77,6 +89,12 @@ const Navbar = ()=>{
                   <Link
                     to="/add-problem"
                     className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
+                    onClick={() => {
+                        const elem = document.activeElement;
+                        if (elem) {
+                          elem?.blur();
+                        }
+                      }}
                   >
                     <Code className="w-4 h-4" />
                     Add Problem
@@ -84,7 +102,15 @@ const Navbar = ()=>{
                 </li>
               )}
               <li className="mt-1 border-t border-white/5 pt-1">
-                <LogoutButton className="py-3 hover:bg-error/10 hover:text-error font-medium text-error">
+                <LogoutButton 
+                    className="py-3 hover:bg-error/10 hover:text-error font-medium text-error"
+                    onClick={() => {
+                        const elem = document.activeElement;
+                        if (elem) {
+                          elem?.blur();
+                        }
+                      }}
+                >
                   <LogOut className="w-4 h-4" />
                   Logout
                 </LogoutButton>

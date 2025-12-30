@@ -14,10 +14,10 @@ import {
   Terminal,
 } from "lucide-react";
 import Editor from "@monaco-editor/react";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {axiosInstance} from "../lib/axios"
 import toast from "react-hot-toast";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -513,6 +513,8 @@ public class Main {
 };
 
 const CreateProblemForm = () => {
+    const { id } = useParams();
+    const isEditing = !!id;
     const [sampleType , setSampleType] = useState("DP")
     const navigation = useNavigate();
     const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
@@ -540,6 +542,22 @@ const CreateProblemForm = () => {
         }
     )
 
+    useEffect(() => {
+        if (isEditing) {
+            const fetchProblem = async () => {
+                try {
+                    const res = await axiosInstance.get(`/problems/get-problem/${id}`);
+                    reset(res.data.problem);
+                } catch (error) {
+                    console.error("Error fetching problem:", error);
+                    toast.error("Failed to load problem");
+                    navigation("/explore");
+                }
+            };
+            fetchProblem();
+        }
+    }, [id, isEditing, reset, navigation]);
+
   const {
     fields: testCaseFields,
     append: appendTestCase,
@@ -565,14 +583,19 @@ const CreateProblemForm = () => {
   const onSubmit = async (value)=>{
    try {
     setIsLoading(true)
-    const res = await axiosInstance.post("/problems/create-problem" , value)
-    console.log(res.data);
-    toast.success(res.data.message || "Problem Created successfully⚡");
-    navigation("/");
+    if(isEditing){
+        const res = await axiosInstance.put(`/problems/update-problem/${id}` , value)
+        toast.success(res.data.message || "Problem Updated successfully⚡");
+    }else{
+        const res = await axiosInstance.post("/problems/create-problem" , value)
+        toast.success(res.data.message || "Problem Created successfully⚡");
+    }
+    
+    navigation("/explore");
 
    } catch (error) {
     console.log(error);
-    toast.error("Error creating problem")
+    toast.error(isEditing ? "Error updating problem" : "Error creating problem")
    }
    finally{
       setIsLoading(false);
@@ -595,6 +618,7 @@ const CreateProblemForm = () => {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full -z-10 opacity-40 pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[10%] w-[30%] h-[30%] bg-secondary/20 blur-[100px] rounded-full -z-10 opacity-30 pointer-events-none"></div>
 
+      <div className="max-w-[1600px] mx-auto relative z-10">
       <div className="max-w-5xl mx-auto">
         <div className="glass-panel rounded-2xl border border-white/5 shadow-2xl p-6 md:p-8 relative z-10">
           
@@ -605,7 +629,7 @@ const CreateProblemForm = () => {
                 <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
                   <FileText className="w-6 h-6 text-primary" />
                 </div>
-                Create New Problem
+                {isEditing ? "Edit Problem" : "Create New Problem"}
               </h2>
               <p className="text-base-content/60 mt-1 ml-1">Contribute challenges to the community</p>
             </div>
@@ -952,7 +976,9 @@ const CreateProblemForm = () => {
       </div>
       
       {/* Overlay Loading */}
-       {isLoading && (
+       </div>
+
+      {isLoading && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="glass-panel p-8 rounded-2xl flex flex-col items-center gap-4">
             <span className="loading loading-spinner loading-lg text-primary"></span>

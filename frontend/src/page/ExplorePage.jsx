@@ -19,7 +19,8 @@ const ExplorePage = () => {
     }
 
     return (
-        <div className="min-h-screen pt-20 px-4 pb-10 max-w-7xl mx-auto">
+        <div className="min-h-screen pt-20 px-4 pb-10">
+            <div className="max-w-[1600px] mx-auto">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gradient mb-2">Explore Problems</h1>
                 <p className="text-base-content/60">Practice and master algorithms with our curated list of problems.</p>
@@ -35,6 +36,7 @@ const ExplorePage = () => {
                         </div>
                     )
                 }
+            </div>
             </div>
         </div>
     );

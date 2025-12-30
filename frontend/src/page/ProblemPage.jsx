@@ -15,6 +15,8 @@ import {
   Users,
   ThumbsUp,
   Home,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { useProblemStore } from "../store/useProblemStore";
@@ -42,7 +44,9 @@ const ProblemPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
-  const { executeCode, submission, isExecuting } = useExecutionStore();
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+
+  const { executeCode, submission, isRunning, isSubmitting } = useExecutionStore();
 
   useEffect(() => {
     getProblemById(id);
@@ -83,7 +87,8 @@ const ProblemPage = () => {
       const language_id = getLanguageId(selectedLanguage);
       const stdin = problem.testcases.map((tc) => tc.input);
       const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
+      executeCode(code, language_id, stdin, expected_outputs, id, "run");
+      setIsConsoleOpen(true);
     } catch (error) {
       console.log("Error executing code", error);
     }
@@ -95,7 +100,7 @@ const ProblemPage = () => {
       const language_id = getLanguageId(selectedLanguage);
       const stdin = problem.testcases.map((tc) => tc.input);
       const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
+      executeCode(code, language_id, stdin, expected_outputs, id, "submit");
     } catch (error) {
       console.log("Error executing code", error);
     }
@@ -207,9 +212,10 @@ const ProblemPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-4 pb-8 px-4 max-w-[1600px] mx-auto">
+    <div className="min-h-screen pb-8">
       {/* Custom Navbar for Problem Page */}
-      <nav className="glass-panel p-3 mb-6 flex justify-between items-center rounded-2xl sticky top-4 z-40">
+      <div className="w-full pt-4 px-4 sticky top-0 z-40">
+        <nav className="glass-panel p-3 mb-6 flex justify-between items-center rounded-2xl mx-auto max-w-[1600px]">
         <div className="flex-1 gap-4 flex items-center">
           <Link to={"/"} className="btn btn-circle btn-ghost btn-sm hover:bg-white/10 text-primary">
             <Home className="w-5 h-5" />
@@ -261,6 +267,9 @@ const ProblemPage = () => {
           </select>
         </div>
       </nav>
+      </div>
+      <div className="px-4 w-full">
+         <div className="max-w-[1600px] mx-auto">
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-140px)]">
         {/* Left Panel: Description & Submissions */}
@@ -350,28 +359,32 @@ const ProblemPage = () => {
                  {/* Only show test cases area if not submitted yet or minimal view */}
                  <div className="flex justify-between items-center">
                    <div className="flex gap-2">
-                        <button className="btn btn-sm btn-ghost gap-2 text-base-content/70">
+                        <button 
+                             className="btn btn-sm btn-ghost gap-2 text-base-content/70 hover:bg-base-content/10"
+                             onClick={() => setIsConsoleOpen(!isConsoleOpen)}
+                        >
                              <Terminal className="w-4 h-4" />
                              Console
+                             <ChevronRight className={`w-3 h-3 transition-transform duration-200 ${isConsoleOpen ? "rotate-90" : ""}`} />
                         </button>
                    </div>
                    <div className="flex gap-3">
                       <button
                         className={`btn btn-sm btn-secondary/20 text-secondary hover:bg-secondary/30 gap-2 ${
-                            isExecuting ? "loading" : ""
+                            isRunning ? "loading" : ""
                         }`}
                         onClick={handleRunCode}
-                        disabled={isExecuting}
+                        disabled={isRunning || isSubmitting}
                       >
-                        {!isExecuting && <Play className="w-4 h-4" />}
+                        {!isRunning && <Play className="w-4 h-4" />}
                         Run
                       </button>
                       <button
                         className="btn btn-sm btn-primary shadow-lg shadow-primary/20 gap-2 px-6"
                         onClick={handleSubmit}
-                        disabled={isExecuting}
+                        disabled={isRunning || isSubmitting}
                       >
-                        {isExecuting ? (
+                        {isSubmitting ? (
                           <span className="loading loading-spinner loading-xs"></span>
                         ) : (
                             <>Submit</>
@@ -379,10 +392,82 @@ const ProblemPage = () => {
                       </button>
                    </div>
                 </div>
+                                  {isConsoleOpen && (
+                     <div className="mt-4 border-t border-white/5 pt-4 animate-in slide-in-from-bottom-2 duration-200">
+                         <div className="flex items-center justify-between mb-3">
+                             <span className="text-xs font-semibold uppercase tracking-wider text-base-content/50">Test Results</span>
+                         </div>
+                         <div className="bg-black/30 rounded-xl p-4 font-mono text-sm h-48 overflow-y-auto custom-scrollbar">
+                            {submission ? (
+                                <div className="space-y-4">
+                                    <div className={`flex items-center gap-2 ${submission.status === "Accepted" ? "text-success" : "text-error"}`}>
+                                        {submission.status === "Accepted" ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                                        <span className="font-semibold">{submission.status}</span>
+                                    </div>
+                                    
+                                    {submission.compileOutput && (
+                                        <div className="bg-base-100/50 p-3 rounded-lg border border-red-500/20 text-red-400">
+                                            <div className="text-xs opacity-50 mb-1">Compilation Error:</div>
+                                            <pre className="whitespace-pre-wrap">
+                                                {(() => {
+                                                    try {
+                                                        const parsed = JSON.parse(submission.compileOutput);
+                                                        return Array.isArray(parsed) ? parsed.join('\n') : submission.compileOutput;
+                                                    } catch {
+                                                        return submission.compileOutput;
+                                                    }
+                                                })()}
+                                            </pre>
+                                        </div>
+                                    )}
+                                    
+                                    {submission.stdout && (
+                                        <div className="bg-base-100/50 p-3 rounded-lg border border-white/5">
+                                            <div className="text-xs opacity-50 mb-1">Output:</div>
+                                            <pre className="whitespace-pre-wrap">
+                                                {(() => {
+                                                    try {
+                                                        const parsed = JSON.parse(submission.stdout);
+                                                        return Array.isArray(parsed) ? parsed.join('\n') : submission.stdout;
+                                                    } catch {
+                                                        return submission.stdout;
+                                                    }
+                                                })()}
+                                            </pre>
+                                        </div>
+                                    )}
+
+                                    {submission.stderr && (
+                                         <div className="bg-base-100/50 p-3 rounded-lg border border-red-500/20 text-red-400">
+                                             <div className="text-xs opacity-50 mb-1">Standard Error:</div>
+                                            <pre className="whitespace-pre-wrap">
+                                                {(() => {
+                                                    try {
+                                                        const parsed = JSON.parse(submission.stderr);
+                                                        return Array.isArray(parsed) ? parsed.join('\n') : submission.stderr;
+                                                    } catch {
+                                                        return submission.stderr;
+                                                    }
+                                                })()}
+                                            </pre>
+                                         </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-base-content/40 italic text-center py-10">
+                                    Run your code to see results here
+                                </div>
+                            )}
+                         </div>
+                     </div>
+                  )}
+            </div>
             </div>
         </div>
       </div>
+      </div>
     </div>
+
   );
 };
 

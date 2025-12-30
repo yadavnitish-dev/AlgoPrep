@@ -147,7 +147,7 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
               <th className="py-4">Difficulty</th>
               <th className="py-4">Category</th>
               {authUser?.role === "ADMIN" && <th className="py-4 text-right">Actions</th>}
-              <th className="py-4 text-right pl-4">Add to Playlist</th>
+              <th className="py-4 text-right pl-4"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-base-content/5">
@@ -201,18 +201,15 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
                     </td>
                     {authUser?.role === "ADMIN" && (
                       <td className="text-right space-x-2">
-                         <button
+                       <Link
+                          to={`/problem/${problem.id}/edit`}
                           className="btn btn-ghost btn-sm btn-square text-info hover:bg-info/10"
-                          onClick={() => {
-                            setSelectedProblem(problem);
-                            setIsEditModalOpen(true);
-                          }}
                         >
                           <PencilIcon className="size-4" />
-                        </button>
+                        </Link>
                         <button
                           className="btn btn-ghost btn-sm btn-square text-error hover:bg-error/10"
-                          onClick={() => handleDeleteProblem(problem.id)}
+                          onClick={() => handleDelete(problem.id)}
                         >
                           <TrashIcon className="size-4" />
                         </button>

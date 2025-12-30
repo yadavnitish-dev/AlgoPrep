@@ -2,18 +2,16 @@ import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
 
 
-const LogoutButton = ({children})=>{
+const LogoutButton = ({children, onClick, className, ...props})=>{
     const {logout} = useAuthStore()
 
-    const onLogout = async()=>{
+    const handleLogout = async(e)=>{
+        if(onClick) onClick(e);
         await logout();
-        
     }
 
-
-
     return (
-        <button className="btn btn-primary" onClick={onLogout}> 
+        <button className={className || "btn btn-primary"} onClick={handleLogout} {...props}> 
             {children}
         </button>
     )
