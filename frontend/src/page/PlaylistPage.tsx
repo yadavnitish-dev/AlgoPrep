@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 import { Loader, Trash2, ArrowLeft } from "lucide-react";
@@ -16,14 +16,18 @@ const PlaylistPage = () => {
   } = usePlaylistStore();
 
   useEffect(() => {
-    getPlaylistDetails(id);
+    if (id) {
+      getPlaylistDetails(id);
+    }
   }, [getPlaylistDetails, id]);
 
-  const handleRemoveProblem = async (problemId) => {
+  const handleRemoveProblem = async (problemId: string) => {
+    if (!id) return;
     await removeProblemFromPlaylist(id, [problemId]);
   };
 
   const handleDeletePlaylist = async () => {
+    if (!id) return;
     if (window.confirm("Are you sure you want to delete this playlist?")) {
       await deletePlaylist(id);
       navigate("/profile");
