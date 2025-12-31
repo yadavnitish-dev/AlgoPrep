@@ -68,12 +68,4 @@ npm install
 npm run dev
 ```
 
-## 🚀 Deployment
 
-For a production-ready "All-in-One" deployment (Frontend, Backend, Database, and Judge0 on a single AWS EC2 instance), please refer to the [Deployment Guide](deployment_guide.md).
-
-It covers:
--   AWS EC2 Setup (Recommended: `c7i-flex.large`)
--   Docker Compose for Judge0 & Postgres
--   Nginx Reverse Proxy Configuration
--   PM2 Process Management
