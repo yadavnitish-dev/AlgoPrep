@@ -1,9 +1,8 @@
-import React , {useState} from 'react'
+import {useState} from 'react'
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
 import {
-  Code,
   Eye,
   EyeOff,
   Loader2,
@@ -22,6 +21,9 @@ const LoginSchema = z.object({
 
 })
 
+
+type LoginFormData = z.infer<typeof LoginSchema>;
+
 const LoginPage = () => {
 
   const {isLoggingIn , login} = useAuthStore()
@@ -31,11 +33,11 @@ const LoginPage = () => {
     register ,
     handleSubmit,
     formState:{errors},
-  } = useForm({
+  } = useForm<LoginFormData>({
     resolver:zodResolver(LoginSchema)
   })
 
-  const onSubmit = async (data)=>{
+  const onSubmit = async (data: LoginFormData)=>{
     try {
       await login(data)
       

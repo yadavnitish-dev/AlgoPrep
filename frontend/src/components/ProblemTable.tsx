@@ -8,7 +8,15 @@ import CreatePlaylistModal from "./CreatePlaylistModal";
 import { usePlaylistStore } from "../store/usePlaylistStore";
 
 
-const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
+import { Problem } from "../types";
+
+interface ProblemsTableProps {
+  problems: Problem[];
+  isPlaylist?: boolean;
+  onRemove?: (id: string) => void;
+}
+
+const ProblemsTable: React.FC<ProblemsTableProps> = ({ problems, isPlaylist = false, onRemove }) => {
   const { authUser } = useAuthStore();
   const { onDeleteProblem } = useActions();
   const { createPlaylist } = usePlaylistStore();
@@ -18,18 +26,17 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAddToPlaylistModalOpen, setIsAddToPlaylistModalOpen] = useState(false);
-  const [selectedProblemId, setSelectedProblemId] = useState(null);
+  const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
 
   // Extract all unique tags from problems
   const uniqueTags = useMemo(() => {
     if (!Array.isArray(problems)) return [];
-    const tagsSet = new Set();
+    const tagsSet = new Set<string>();
     problems.forEach((p) => p.tags?.forEach((t) => tagsSet.add(t)));
     return Array.from(tagsSet);
   }, [problems]);
 
-  // Define allowed difficulties
-  const difficulties = ["EASY", "MEDIUM", "HARD"];
+
 
   // Filter problems based on search, difficulty, and tags
   const filteredProblems = useMemo(() => {
@@ -55,15 +62,15 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
     );
   }, [filteredProblems, currentPage]);
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     onDeleteProblem(id);
   };
 
-  const handleCreatePlaylist = async (data) => {
+  const handleCreatePlaylist = async (data: any) => {
     await createPlaylist(data);
   };
 
-  const handleAddToPlaylist = (problemId) => {
+  const handleAddToPlaylist = (problemId: string) => {
     setSelectedProblemId(problemId);
     setIsAddToPlaylistModalOpen(true);
   };
@@ -220,7 +227,7 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
                           isPlaylist ? (
                                <button 
                                   className="btn btn-ghost btn-sm text-error gap-2 hover:bg-error/10"
-                                  onClick={() => onRemove(problem.id)}
+                                  onClick={() => onRemove?.(problem.id)}
                               >
                                   <Trash className="w-4 h-4"/>
                                   <span className="hidden md:inline">Remove</span>
@@ -228,10 +235,7 @@ const ProblemsTable = ({ problems, isPlaylist = false, onRemove }) => {
                           ) : (
                                <button
                                   className="btn btn-ghost btn-sm text-base-content/60 hover:text-primary hover:bg-primary/10 transition-all"
-                                  onClick={() => {
-                                  setIsAddToPlaylistModalOpen(true);
-                                  setSelectedProblemId(problem.id);
-                                  }}
+                                  onClick={() => handleAddToPlaylist(problem.id)}
                               >
                                   <Bookmark className="w-4 h-4" />
                               </button>

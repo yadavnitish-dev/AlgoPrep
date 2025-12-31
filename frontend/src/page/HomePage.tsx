@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
@@ -33,7 +32,6 @@ const HomePage = () => {
         </div>
       </div>
 
-       {/* Features Grid (Optional/Placeholder for visual balance) */}
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto w-full px-4 relative z-10">
            {[
                { title: "Curated Problems", desc: "Hand-picked collection of high-quality algorithm challenges.", icon: "🎯" },
