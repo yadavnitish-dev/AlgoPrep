@@ -67,18 +67,21 @@ const ProblemPage = () => {
 
   console.log("submission", submissions);
 
-  const handleLanguageChange = (e) => {
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
-    setCode(problem.codeSnippets?.[lang] || "");
+    if (problem?.codeSnippets) {
+      setCode(problem.codeSnippets[lang] || "");
+    }
   };
 
-  const handleRunCode = (e) => {
+  const handleRunCode = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!problem || !id) return;
     try {
       const language_id = getLanguageId(selectedLanguage);
-      const stdin = problem.testcases.map((tc) => tc.input);
-      const expected_outputs = problem.testcases.map((tc) => tc.output);
+      const stdin = problem.testcases?.map((tc) => tc.input) || [];
+      const expected_outputs = problem.testcases?.map((tc) => tc.output) || [];
       executeCode(code, language_id, stdin, expected_outputs, id, "run");
       setIsConsoleOpen(true);
     } catch (error) {
@@ -86,12 +89,13 @@ const ProblemPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!problem || !id) return;
     try {
       const language_id = getLanguageId(selectedLanguage);
-      const stdin = problem.testcases.map((tc) => tc.input);
-      const expected_outputs = problem.testcases.map((tc) => tc.output);
+      const stdin = problem.testcases?.map((tc) => tc.input) || [];
+      const expected_outputs = problem.testcases?.map((tc) => tc.output) || [];
       executeCode(code, language_id, stdin, expected_outputs, id, "submit");
     } catch (error) {
       console.log("Error executing code", error);

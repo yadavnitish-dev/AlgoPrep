@@ -55,5 +55,8 @@ export interface Submission {
   timeTaken?: number;
   memoryTaken?: number;
   sourceCode: string;
+  stdout?: string;
+  stderr?: string;
+  compileOutput?: string;
   createdAt: string;
 }
