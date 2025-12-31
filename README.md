@@ -1,6 +1,6 @@
-# LeetLab
+# AlgoPrep
 
-LeetLab is a robust, full-stack competitive programming platform that allows users to solve coding problems, run code against test cases, and track their progress. It features a scalable microservices architecture with a self-hosted code execution engine (Judge0).
+AlgoPrep is a robust, full-stack competitive programming platform that allows users to solve coding problems, run code against test cases, and track their progress. It features a scalable microservices architecture with a self-hosted code execution engine (Judge0).
 
 ## 🚀 Features
 
@@ -42,7 +42,7 @@ The application uses a modular architecture:
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/yadavnitish-dev/AlgoPrep.git
-cd leetlab
+cd AlgoPrep
 ```
 
 ### 2. Setup Backend
