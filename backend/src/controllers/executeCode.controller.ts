@@ -1,6 +1,7 @@
 import { db } from "../libs/db.js";
 import {
   getLanguageName,
+  Judge0SubmissionResult,
   pollBatchResults,
   submitBatch,
 } from "../libs/judge0.lib.js";
@@ -22,7 +23,7 @@ interface TestResult {
 export const executeCode = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   try {
     const { source_code, language_id, stdin, expected_outputs, problemId } =
       req.body;
@@ -58,7 +59,7 @@ export const executeCode = async (
     console.log(results);
 
     let allPassed = true;
-    const detailedResults: TestResult[] = results.map((result: any, i: number) => {
+    const detailedResults: TestResult[] = results.map((result: Judge0SubmissionResult, i: number) => {
       const stdout = result.stdout?.trim();
       const expected_output = expected_outputs[i]?.trim();
       const passed = stdout === expected_output;
@@ -146,14 +147,13 @@ export const executeCode = async (
       },
     });
     
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Code Executed! Successfully!",
       submission: submissionWithTestCase,
     });
   } catch (error: any) {
-    console.error("Error executing code:", error.message);
-    res.status(500).json({ error: "Failed to execute code" });
+    console.error("Error executing code:", error?.message || error);
+    return res.status(500).json({ error: "Failed to execute code" });
   }
 };
-

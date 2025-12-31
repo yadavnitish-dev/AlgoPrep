@@ -105,14 +105,14 @@ export const executeCode = async (req, res) => {
                 testCases: true,
             },
         });
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Code Executed! Successfully!",
             submission: submissionWithTestCase,
         });
     }
     catch (error) {
-        console.error("Error executing code:", error.message);
-        res.status(500).json({ error: "Failed to execute code" });
+        console.error("Error executing code:", error?.message || error);
+        return res.status(500).json({ error: "Failed to execute code" });
     }
 };

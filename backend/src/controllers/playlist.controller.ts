@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from "../middleware/auth.middleware.js";
 export const createPlayList = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   try {
     const { name, description } = req.body;
     if (!req.user) {
@@ -20,21 +20,21 @@ export const createPlayList = async (
         userId,
       },
     });
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Playlist created successfully",
       playList,
     });
   } catch (error) {
     console.error("Error creating playlist:", error);
-    res.status(500).json({ error: "Failed to create playlist" });
+    return res.status(500).json({ error: "Failed to create playlist" });
   }
 };
 
 export const getPlayAllListDetails = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   try {
     if (!req.user) {
         return res.status(401).json({ error: "Unauthorized" });
@@ -51,20 +51,20 @@ export const getPlayAllListDetails = async (
         },
       },
     });
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Playlist fetched successfully",
       playLists,
     });
   } catch (error) {
     console.error("Error fetching playlist:", error);
-    res.status(500).json({ error: "Failed to fetch playlist" });
+    return res.status(500).json({ error: "Failed to fetch playlist" });
   }
 };
 export const getPlayListDetails = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   const { playlistId } = req.params;
 
   try {
@@ -94,21 +94,21 @@ export const getPlayListDetails = async (
       return res.status(404).json({ error: "Playlist not found" });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Playlist fetched successfully",
       playList,
     });
   } catch (error) {
     console.error("Error fetching playlist:", error);
-    res.status(500).json({ error: "Failed to fetch playlist" });
+    return res.status(500).json({ error: "Failed to fetch playlist" });
   }
 };
 
 export const addProblemToPlaylist = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   const { playlistId } = req.params;
   const { problemIds } = req.body;
 
@@ -131,21 +131,21 @@ export const addProblemToPlaylist = async (
       })),
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Problems added to playlist successfully",
       problemsInPlaylist,
     });
   } catch (error: any) {
-    console.error("Error adding problems to playlist:", error.message);
-    res.status(500).json({ error: "Failed to add problems to playlist" });
+    console.error("Error adding problems to playlist:", error?.message || error);
+    return res.status(500).json({ error: "Failed to add problems to playlist" });
   }
 };
 
 export const deletePlayList = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   const { playlistId } = req.params;
 
   try {
@@ -155,21 +155,21 @@ export const deletePlayList = async (
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Playlist deleted successfully",
       deletedPlaylist,
     });
   } catch (error: any) {
-    console.error("Error deleting playlist:", error.message);
-    res.status(500).json({ error: "Failed to delete playlist" });
+    console.error("Error deleting playlist:", error?.message || error);
+    return res.status(500).json({ error: "Failed to delete playlist" });
   }
 };
 
 export const removeProblemFromPlaylist = async (
   req: AuthenticatedRequest,
   res: Response
-): Promise<any> => {
+): Promise<Response> => {
   const { playlistId } = req.params;
   const { problemIds } = req.body;
 
@@ -187,14 +187,14 @@ export const removeProblemFromPlaylist = async (
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Problem removed from playlist successfully",
       deletedProblem,
     });
   } catch (error: any) {
-    console.error("Error removing problem from playlist:", error.message);
-    res.status(500).json({ error: "Failed to remove problem from playlist" });
+    console.error("Error removing problem from playlist:", error?.message || error);
+    return res.status(500).json({ error: "Failed to remove problem from playlist" });
   }
 };
 

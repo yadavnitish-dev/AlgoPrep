@@ -39,7 +39,23 @@ export const submitBatch = async (
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const pollBatchResults = async (tokens: string[]) => {
+export interface Judge0SubmissionResult {
+  stdout: string | null;
+  time: string;
+  memory: number;
+  stderr: string | null;
+  token: string;
+  compile_output: string | null;
+  message: string | null;
+  status: {
+    id: number;
+    description: string;
+  };
+}
+
+export const pollBatchResults = async (
+  tokens: string[]
+): Promise<Judge0SubmissionResult[]> => {
   if (!process.env.JUDGE0_API_URL) {
     throw new Error("JUDGE0_API_URL is not defined");
   }
@@ -50,14 +66,15 @@ export const pollBatchResults = async (tokens: string[]) => {
         params: {
           tokens: tokens.join(","),
           base64_encoded: false,
+          fields: "*"
         },
       }
     );
 
-    const results = data.submissions;
+    const results: Judge0SubmissionResult[] = data.submissions;
 
     const isAllDone = results.every(
-      (r: any) => r.status.id !== 1 && r.status.id !== 2
+      (r) => r.status.id !== 1 && r.status.id !== 2
     );
 
     if (isAllDone) return results;
