@@ -2,10 +2,16 @@ import React from 'react'
 import {useForm} from "react-hook-form";
 import {X, ListMusic, Plus} from "lucide-react";
 
-const CreatePlaylistModal = ({isOpen , onClose , onSubmit}) => {
-    const {register , handleSubmit , formState:{errors} , reset} = useForm();
+interface CreatePlaylistModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { name: string; description: string }) => Promise<void>;
+}
 
-    const handleFormSubmit = async (data)=>{
+const CreatePlaylistModal: React.FC<CreatePlaylistModalProps> = ({isOpen , onClose , onSubmit}) => {
+    const {register , handleSubmit , formState:{errors} , reset} = useForm<{ name: string; description: string }>();
+
+    const handleFormSubmit = async (data: { name: string; description: string })=>{
         await onSubmit(data);
         reset()
         onClose()

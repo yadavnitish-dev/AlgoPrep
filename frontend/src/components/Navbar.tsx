@@ -1,4 +1,3 @@
-import React from "react"
 import { User, Code, LogOut } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
@@ -9,8 +8,6 @@ import LogoutButton from "./LogoutButton";
 const Navbar = ()=>{
 
     const {authUser} = useAuthStore()
-
-    console.log("AUTH_USER",authUser)
 
     return (
      <nav className="sticky top-0 z-50 w-full py-4 px-4">
@@ -59,7 +56,7 @@ const Navbar = ()=>{
                     to="/explore"
                     className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
                     onClick={() => {
-                        const elem = document.activeElement;
+                        const elem = document.activeElement as HTMLElement;
                         if (elem) {
                           elem?.blur();
                         }
@@ -74,7 +71,7 @@ const Navbar = ()=>{
                   to="/profile"
                   className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
                   onClick={() => {
-                    const elem = document.activeElement;
+                    const elem = document.activeElement as HTMLElement;
                     if (elem) {
                       elem?.blur();
                     }
@@ -90,7 +87,7 @@ const Navbar = ()=>{
                     to="/add-problem"
                     className="py-3 hover:bg-primary/10 hover:text-primary font-medium"
                     onClick={() => {
-                        const elem = document.activeElement;
+                        const elem = document.activeElement as HTMLElement;
                         if (elem) {
                           elem?.blur();
                         }
@@ -105,7 +102,7 @@ const Navbar = ()=>{
                 <LogoutButton 
                     className="py-3 hover:bg-error/10 hover:text-error font-medium text-error"
                     onClick={() => {
-                        const elem = document.activeElement;
+                        const elem = document.activeElement as HTMLElement;
                         if (elem) {
                           elem?.blur();
                         }

@@ -1,9 +1,12 @@
 import { Code, Terminal, FileCode, Braces } from "lucide-react"
 import { useEffect, useState } from "react"
 
+interface CodeBackgroundProps {
+  title: string;
+  subtitle: string;
+}
 
-
-const CodeBackground = ({ title, subtitle }) => {
+const CodeBackground: React.FC<CodeBackgroundProps> = ({ title, subtitle }) => {
   const [activeIndex, setActiveIndex] = useState(0)
 
   // Code snippets to display in the background

@@ -23,7 +23,7 @@ const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
+  tags: z.array(z.object({ value: z.string() })).min(1, "At least one tag is required"),
   constraints: z.string().min(1, "Constraints are required"),
   hints: z.string().optional(),
   editorial: z.string().optional(),
@@ -517,12 +517,15 @@ const CreateProblemForm = () => {
     const isEditing = !!id;
     const [sampleType , setSampleType] = useState("DP")
     const navigation = useNavigate();
-    const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
+    
+    type ProblemFormData = z.infer<typeof problemSchema>;
+
+    const {register , control , handleSubmit , reset , formState:{errors}} = useForm<ProblemFormData>(
         {
             resolver:zodResolver(problemSchema),
             defaultValues:{
                  testcases: [{ input: "", output: "" }],
-      tags: [""],
+      tags: [{ value: "" }],
       examples: {
         JAVASCRIPT: { input: "", output: "", explanation: "" },
         PYTHON: { input: "", output: "", explanation: "" },
@@ -547,7 +550,10 @@ const CreateProblemForm = () => {
             const fetchProblem = async () => {
                 try {
                     const res = await axiosInstance.get(`/problems/get-problem/${id}`);
-                    reset(res.data.problem);
+                    const problemData = res.data.problem;
+                    // Transform tags from string[] to {value: string}[]
+                    const formattedTags = problemData.tags.map((tag: string) => ({ value: tag }));
+                    reset({ ...problemData, tags: formattedTags });
                 } catch (error) {
                     console.error("Error fetching problem:", error);
                     toast.error("Failed to load problem");
@@ -563,7 +569,7 @@ const CreateProblemForm = () => {
     append: appendTestCase,
     remove: removeTestCase,
     replace: replacetestcases,
-  } = useFieldArray({
+  } = useFieldArray<ProblemFormData, "testcases">({
     control,
     name: "testcases",
   });
@@ -573,21 +579,27 @@ const CreateProblemForm = () => {
     append: appendTag,
     remove: removeTag,
     replace: replaceTags,
-  } = useFieldArray({
+  } = useFieldArray<ProblemFormData, "tags">({
     control,
     name: "tags",
   });
 
   const [isLoading , setIsLoading] = useState(false);
 
-  const onSubmit = async (value)=>{
+  const onSubmit = async (value: ProblemFormData)=>{
    try {
     setIsLoading(true)
+    // Transform tags from {value: string}[] to string[] for API
+    const formattedData = {
+        ...value,
+        tags: value.tags.map(tag => tag.value) // Extract strings from objects
+    };
+
     if(isEditing){
-        const res = await axiosInstance.put(`/problems/update-problem/${id}` , value)
+        const res = await axiosInstance.put(`/problems/update-problem/${id}` , formattedData)
         toast.success(res.data.message || "Problem Updated successfully⚡");
     }else{
-        const res = await axiosInstance.post("/problems/create-problem" , value)
+        const res = await axiosInstance.post("/problems/create-problem" , formattedData)
         toast.success(res.data.message || "Problem Created successfully⚡");
     }
     
@@ -603,13 +615,15 @@ const CreateProblemForm = () => {
   }
 
   const loadSampleData=()=>{
-    const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sampleData = (sampleType === "DP" ? sampledpData : sampleStringProblem) as any;
   
-   replaceTags(sampleData.tags.map((tag) => tag));
-    replacetestcases(sampleData.testcases.map((tc) => tc));
+    const formattedTags = sampleData.tags.map((tag: string) => ({ value: tag }));
+    replaceTags(formattedTags);
+    replacetestcases(sampleData.testcases);
 
    // Reset the form with sample data
-    reset(sampleData);
+    reset({ ...sampleData, tags: formattedTags });
 }
 
   return (
@@ -724,7 +738,7 @@ const CreateProblemForm = () => {
                 <button
                   type="button"
                   className="btn btn-xs btn-outline btn-secondary"
-                  onClick={() => appendTag("")}
+                  onClick={() => appendTag({ value: "" })}
                 >
                   <Plus className="w-3 h-3" /> Add
                 </button>
@@ -735,7 +749,7 @@ const CreateProblemForm = () => {
                     <input
                       type="text"
                       className="input input-sm input-bordered flex-1 bg-black/40 border-white/10 focus:border-secondary/50"
-                      {...register(`tags.${index}`)}
+                      {...register(`tags.${index}.value`)}
                       placeholder="e.g. Array"
                     />
                     <button
@@ -812,7 +826,7 @@ const CreateProblemForm = () => {
 
             {/* Language Specific Sections */}
             <div className="space-y-6">
-              {["JAVASCRIPT", "PYTHON", "JAVA"].map((language) => (
+              {(["JAVASCRIPT", "PYTHON", "JAVA"] as const).map((language) => (
                 <div key={language} className="collapse collapse-arrow bg-black/20 border border-white/5 rounded-xl overflow-hidden">
                   <input type="checkbox" defaultChecked={language === "JAVASCRIPT"} /> 
                   <div className="collapse-title text-base font-semibold flex items-center gap-2 p-4">

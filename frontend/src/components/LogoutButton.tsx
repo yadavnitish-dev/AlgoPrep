@@ -2,10 +2,14 @@ import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
 
 
-const LogoutButton = ({children, onClick, className, ...props})=>{
+interface LogoutButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+}
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({children, onClick, className, ...props})=>{
     const {logout} = useAuthStore()
 
-    const handleLogout = async(e)=>{
+    const handleLogout = async(e: React.MouseEvent<HTMLButtonElement>)=>{
         if(onClick) onClick(e);
         await logout();
     }

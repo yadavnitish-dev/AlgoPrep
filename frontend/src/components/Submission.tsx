@@ -1,19 +1,35 @@
 import React from 'react';
 import { CheckCircle2, XCircle, Clock, MemoryStick as Memory } from 'lucide-react';
+import { Submission as SubmissionType } from '../types';
 
-const SubmissionResults = ({ submission }) => {
+interface SubmissionResultsProps {
+    submission: SubmissionType & {
+        testCases: Array<{
+            id: string;
+            passed: boolean;
+            expected: string;
+            stdout: string | null;
+            memory: number;
+            time: number;
+        }>;
+        memory: string;
+        time: string;
+    }
+}
+
+const SubmissionResults: React.FC<SubmissionResultsProps> = ({ submission }) => {
   // Parse stringified arrays
   const memoryArr = JSON.parse(submission.memory || '[]');
   const timeArr = JSON.parse(submission.time || '[]');
 
   // Calculate averages
   const avgMemory = memoryArr
-    .map(m => parseFloat(m)) // remove ' KB' using parseFloat
-    .reduce((a, b) => a + b, 0) / memoryArr.length;
+    .map((m: string) => parseFloat(m)) // remove ' KB' using parseFloat
+    .reduce((a: number, b: number) => a + b, 0) / memoryArr.length;
 
   const avgTime = timeArr
-    .map(t => parseFloat(t)) // remove ' s' using parseFloat
-    .reduce((a, b) => a + b, 0) / timeArr.length;
+    .map((t: string) => parseFloat(t)) // remove ' s' using parseFloat
+    .reduce((a: number, b: number) => a + b, 0) / timeArr.length;
 
   const passedTests = submission.testCases.filter(tc => tc.passed).length;
   const totalTests = submission.testCases.length;

@@ -5,10 +5,19 @@ import {
   MemoryStick as Memory,
   Calendar,
 } from "lucide-react";
+import { Submission } from "../types";
 
-const SubmissionsList = ({ submissions, isLoading }) => {
+interface SubmissionsListProps {
+  submissions: (Submission & { 
+      memory: string;
+      time: string;
+  })[] | null;
+  isLoading: boolean;
+}
+
+const SubmissionsList: React.FC<SubmissionsListProps> = ({ submissions, isLoading }) => {
   // Helper function to safely parse JSON strings
-  const safeParse = (data) => {
+  const safeParse = (data: string) => {
     try {
       return JSON.parse(data);
     } catch (error) {
@@ -18,23 +27,23 @@ const SubmissionsList = ({ submissions, isLoading }) => {
   };
 
   // Helper function to calculate average memory usage
-  const calculateAverageMemory = (memoryData) => {
-    const memoryArray = safeParse(memoryData).map((m) =>
+  const calculateAverageMemory = (memoryData: string) => {
+    const memoryArray = safeParse(memoryData).map((m: string) =>
       parseFloat(m.split(" ")[0])
     );
     if (memoryArray.length === 0) return 0;
     return (
-      memoryArray.reduce((acc, curr) => acc + curr, 0) / memoryArray.length
+      memoryArray.reduce((acc: number, curr: number) => acc + curr, 0) / memoryArray.length
     );
   };
 
   // Helper function to calculate average runtime
-  const calculateAverageTime = (timeData) => {
-    const timeArray = safeParse(timeData).map((t) =>
+  const calculateAverageTime = (timeData: string) => {
+    const timeArray = safeParse(timeData).map((t: string) =>
       parseFloat(t.split(" ")[0])
     );
     if (timeArray.length === 0) return 0;
-    return timeArray.reduce((acc, curr) => acc + curr, 0) / timeArray.length;
+    return timeArray.reduce((acc: number, curr: number) => acc + curr, 0) / timeArray.length;
   };
 
   // Loading state

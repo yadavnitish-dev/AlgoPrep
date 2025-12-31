@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Plus, Loader, ListMusic, Check } from 'lucide-react';
 import { usePlaylistStore } from '../store/usePlaylistStore';
 
-const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
+interface AddToPlaylistModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  problemId: string | null;
+}
+
+const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({ isOpen, onClose, problemId }) => {
   const { playlists, getAllPlaylists, addProblemToPlaylist, isLoading } = usePlaylistStore();
   const [selectedPlaylist, setSelectedPlaylist] = useState('');
 
@@ -11,11 +17,11 @@ const AddToPlaylistModal = ({ isOpen, onClose, problemId }) => {
       getAllPlaylists();
       setSelectedPlaylist(''); // Reset selection when opening
     }
-  }, [isOpen]);
+  }, [isOpen, getAllPlaylists]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPlaylist) return;
+    if (!selectedPlaylist || !problemId) return;
 
     await addProblemToPlaylist(selectedPlaylist, [problemId]);
     onClose();
