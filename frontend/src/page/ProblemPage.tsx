@@ -80,6 +80,7 @@ const ProblemPage = () => {
     if (!problem || !id) return;
     try {
       const language_id = getLanguageId(selectedLanguage);
+      if (!language_id) return;
       const stdin = problem.testcases?.map((tc) => tc.input) || [];
       const expected_outputs = problem.testcases?.map((tc) => tc.output) || [];
       executeCode(code, language_id, stdin, expected_outputs, id, "run");
@@ -94,6 +95,7 @@ const ProblemPage = () => {
     if (!problem || !id) return;
     try {
       const language_id = getLanguageId(selectedLanguage);
+      if (!language_id) return;
       const stdin = problem.testcases?.map((tc) => tc.input) || [];
       const expected_outputs = problem.testcases?.map((tc) => tc.output) || [];
       executeCode(code, language_id, stdin, expected_outputs, id, "submit");
