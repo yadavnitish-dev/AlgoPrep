@@ -1,4 +1,5 @@
 import { useState } from "react";
+import leetLabLogo from "../assets/leetlab.svg";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
@@ -56,7 +57,7 @@ const SignUpPage = () => {
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 border border-primary/20 shadow-lg shadow-primary/5">
-                <img src="/leetlab.svg" className="size-8" alt="Logo" />
+                <img src={leetLabLogo} className="size-8" alt="Logo" />
               </div>
               <h1 className="text-3xl font-bold mt-4 font-display tracking-tight text-white flex items-center gap-2">
                 AlgoPrep

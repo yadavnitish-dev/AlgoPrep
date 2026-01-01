@@ -1,4 +1,5 @@
-import {useState} from 'react'
+import { useState } from "react";
+import leetLabLogo from "../assets/leetlab.svg";
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { Link } from 'react-router-dom'
@@ -55,7 +56,7 @@ const LoginPage = () => {
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <img src="/leetlab.svg" className="size-8" alt="Logo" />
+                <img src={leetLabLogo} className="size-8" alt="Logo" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Welcome Back to AlgoPrep</h1>
               <p className="text-base-content/60">Login to your account</p>

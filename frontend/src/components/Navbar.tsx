@@ -1,6 +1,7 @@
 import { User, Code, LogOut } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router-dom";
+import leetLabLogo from "../assets/leetlab.svg";
 import LogoutButton from "./LogoutButton";
 
 
@@ -15,7 +16,7 @@ const Navbar = ()=>{
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer pl-2">
           <div className="bg-primary/10 p-2 rounded-xl">
-             <img src="/src/assets/leetlab.svg" className="size-8" alt="Logo" />
+             <img src={leetLabLogo} className="size-8" alt="Logo" />
           </div>
           <span className="text-xl md:text-2xl font-bold tracking-tight text-white hidden md:block font-display">
             AlgoPrep
