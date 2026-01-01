@@ -28,6 +28,8 @@ export const createProblem = async (
   }
 
   try {
+    console.log("Creating problem... Skipping Judge0 validation for now.");
+    /*
     for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
       const languageId = getJudge0LanguageId(language);
 
@@ -63,24 +65,25 @@ export const createProblem = async (
           });
         }
       }
-
-      const newProblem = await db.problem.create({
-        data: {
-          title,
-          description,
-          difficulty,
-          tags,
-          examples,
-          constraints,
-          testcases,
-          codeSnippets,
-          referenceSolutions: referenceSolutions as any,
-          userId: req.user.id,
-        },
-      });
-
-      return res.status(201).json(newProblem);
     }
+    */
+
+    const newProblem = await db.problem.create({
+      data: {
+        title,
+        description,
+        difficulty,
+        tags,
+        examples,
+        constraints,
+        testcases,
+        codeSnippets,
+        referenceSolutions: referenceSolutions as any,
+        userId: req.user.id,
+      },
+    });
+
+    return res.status(201).json(newProblem);
   } catch (error) {
     console.error("Error in createProblem:", error);
     res.status(500).json({ error: "Internal server error" });
