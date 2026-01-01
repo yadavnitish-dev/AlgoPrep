@@ -15,7 +15,7 @@ const Navbar = ()=>{
         {/* Logo Section */}
         <Link to="/" className="flex items-center gap-3 cursor-pointer pl-2">
           <div className="bg-primary/10 p-2 rounded-xl">
-             <img src="/leetlab.svg" className="size-8" alt="Logo" />
+             <img src="/src/assets/leetlab.svg" className="size-8" alt="Logo" />
           </div>
           <span className="text-xl md:text-2xl font-bold tracking-tight text-white hidden md:block font-display">
             AlgoPrep
