@@ -47,5 +47,8 @@ jobs:
             npm install
             npm run build
             
+            # Copy build files to Nginx root
+            sudo rsync -av --delete dist/ /var/www/algoprep/
+            
             # Restart Nginx
             sudo systemctl restart nginx
