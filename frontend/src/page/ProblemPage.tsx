@@ -22,13 +22,14 @@ import { getLanguageId } from "../lib/lang";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
 import SubmissionsList from "../components/SubmissionList";
+import SubmissionResults from "../components/Submission";
 
 const ProblemPage = () => {
   const { id } = useParams();
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
 
   const {
-    submission: submissions,
+    submissions,
     isLoading: isSubmissionsLoading,
     getSubmissionForProblem,
     getSubmissionCountForProblem,
@@ -41,6 +42,7 @@ const ProblemPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
 
   const { executeCode, submission, isRunning, isSubmitting } = useExecutionStore();
 
@@ -64,8 +66,6 @@ const ProblemPage = () => {
       getSubmissionForProblem(id);
     }
   }, [activeTab, id]);
-
-  console.log("submission", submissions);
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang = e.target.value;
@@ -180,6 +180,8 @@ const ProblemPage = () => {
           <SubmissionsList
             submissions={submissions}
             isLoading={isSubmissionsLoading}
+            // @ts-ignore
+            onSubmissionClick={(submission) => setSelectedSubmission(submission)}
           />
         );
       case "discussion":
@@ -464,8 +466,29 @@ const ProblemPage = () => {
         </div>
       </div>
       </div>
-    </div>
 
+    
+    {/* Submission Details Modal */}
+      {selectedSubmission && (
+        <dialog className="modal modal-open">
+          <div className="modal-box w-11/12 max-w-4xl bg-base-100">
+            <form method="dialog">
+              <button
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                onClick={() => setSelectedSubmission(null)}
+              >
+                ✕
+              </button>
+            </form>
+            <h3 className="font-bold text-lg mb-4">Submission Details</h3>
+            <SubmissionResults submission={selectedSubmission} />
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={() => setSelectedSubmission(null)}>close</button>
+          </form>
+        </dialog>
+      )}
+    </div>
   );
 };
 

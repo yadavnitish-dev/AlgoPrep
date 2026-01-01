@@ -44,6 +44,9 @@ export const getSubmissionsForProblem = async (
         userId: userId,
         problemId: problemId,
       },
+      include: {
+        testCases: true,
+      },
     });
 
     res.status(200).json({

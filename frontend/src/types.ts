@@ -59,4 +59,17 @@ export interface Submission {
   stderr?: string;
   compileOutput?: string;
   createdAt: string;
+  memory: string;
+  time: string;
+  testCases: Array<{
+    id: string;
+    passed: boolean;
+    expected: string;
+    stdout: string | null;
+    memory: number;
+    time: number;
+    stderr?: string | null;
+    compileOutput?: string | null;
+    status?: any;
+  }>;
 }

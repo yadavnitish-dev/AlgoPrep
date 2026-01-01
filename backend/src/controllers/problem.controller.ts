@@ -29,11 +29,10 @@ export const createProblem = async (
 
   try {
     console.log("Creating problem... Skipping Judge0 validation for now.");
-    /*
     for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
       const languageId = getJudge0LanguageId(language);
 
-      if (!language) {
+      if (!languageId) {
         return res.status(400).json({
           error: `Language ${language} is not supported`,
         });
@@ -57,16 +56,22 @@ export const createProblem = async (
       for (let i = 0; i < results.length; i++) {
         const result = results[i];
         console.log("result--------", result);
-
+        
         // @ts-ignore
-        if (result.status.id !== 3) {
+        const expectedOutput = testcases[i].output;
+        const actualOutput = result.stdout || "";
+        
+        // Check if status is Accepted OR if output matches (ignoring whitespace)
+        // @ts-ignore
+        const passed = result.status.id === 3 || actualOutput.trim() === expectedOutput.trim();
+
+        if (!passed) {
           return res.status(400).json({
-            error: `Testcase ${i + 1} failed for language ${language}`,
+            error: `Testcase ${i + 1} failed for language ${language}. Expected: ${expectedOutput}, Got: ${actualOutput}`,
           });
         }
       }
     }
-    */
 
     const newProblem = await db.problem.create({
       data: {

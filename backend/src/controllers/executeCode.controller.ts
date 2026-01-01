@@ -42,11 +42,11 @@ export const executeCode = async (
       return res.status(400).json({ error: "Invalid or Missing test cases" });
     }
 
-    const submissions = stdin.map((input: string) => ({
+    const submissions = stdin.map((input: string, i: number) => ({
       source_code,
       language_id,
       stdin: input,
-      expected_output: "", // Helper requirement for structure, though ignored in some contexts
+      expected_output: expected_outputs[i] || "",
     }));
 
     const submitResponse = await submitBatch(submissions);

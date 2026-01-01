@@ -13,9 +13,10 @@ interface SubmissionsListProps {
       time: string;
   })[] | null;
   isLoading: boolean;
+  onSubmissionClick?: (submission: Submission) => void;
 }
 
-const SubmissionsList: React.FC<SubmissionsListProps> = ({ submissions, isLoading }) => {
+const SubmissionsList: React.FC<SubmissionsListProps> = ({ submissions, isLoading, onSubmissionClick }) => {
   // Helper function to safely parse JSON strings
   const safeParse = (data: string) => {
     try {
@@ -73,7 +74,8 @@ const SubmissionsList: React.FC<SubmissionsListProps> = ({ submissions, isLoadin
         return (
           <div
             key={submission.id}
-            className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow rounded-lg"
+            className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow rounded-lg cursor-pointer"
+            onClick={() => onSubmissionClick?.(submission)}
           >
             <div className="card-body p-4">
               <div className="flex items-center justify-between">
