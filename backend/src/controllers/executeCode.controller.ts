@@ -73,7 +73,7 @@ export const executeCode = async (
         expected: expected_output,
         stderr: result.stderr || null,
         compile_output: result.compile_output || null,
-        status: result.status.description,
+        status: passed ? "Accepted" : result.status.description,
         memory: result.memory ? `${result.memory} KB` : undefined,
         time: result.time ? `${result.time} s` : undefined,
       };
